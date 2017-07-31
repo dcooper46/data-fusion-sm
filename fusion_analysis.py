@@ -67,7 +67,7 @@ if __name__ == "__main__":
     target = ['y']
     fusion_vars = ['contact', 'month', 'day_of_week', 'campaign', 'pdays', 'previous', 'poutcome']
 
-    files = {'fused': fusion_params, 'raw': raw_data_params}
+    files = {'fused': fusion_params, 'raw': raw_data_params, 'maps': 'maps.npy'}
     vars_ = {'linking': linking_vars,
              'critical': critical_cells,
              'target': target,
