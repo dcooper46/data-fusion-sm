@@ -1,0 +1,6 @@
+.vscode/launch.json
+.vscode/settings.json
+build/*
+dist/*
+*.egg-info
+*.pyc
