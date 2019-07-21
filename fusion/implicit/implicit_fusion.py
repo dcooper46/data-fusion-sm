@@ -10,9 +10,9 @@ import pandas as pd
 import numpy as np
 from sklearn.metrics import pairwise_distances
 
-from fusion.custom.implicit.matching import statistical_matching as sm
-from fusion.custom.implicit.matching import linear_assignment as la
-from fusion.custom.implicit.importance import importance_weights as iw
+from fusion.implicit.matching import statistical_matching as sm
+from fusion.implicit.matching import linear_assignment as la
+from fusion.implicit.importance import importance_weights as iw
 from fusion.util.exceptions import NotFittedError
 from fusion.data.formatting import encode_columns
 

@@ -4,14 +4,7 @@ classes used across fusion.
 """
 
 __all__ = ['NotFittedError',
-           'ChangedBehaviorWarning',
-           'ConvergenceWarning',
-           'DataConversionWarning',
-           'DataDimensionalityWarning',
-           'EfficiencyWarning',
            'FitFailedWarning',
-           'NonBLASDotWarning',
-           'SkipTestWarning',
            'UndefinedMetricWarning']
 
 

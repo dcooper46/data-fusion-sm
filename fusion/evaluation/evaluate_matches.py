@@ -1,6 +1,6 @@
+from itertools import permutations
 import pandas as pd
 import numpy as np
-from itertools import permutations
 
 
 def _safe_divide(n, d):

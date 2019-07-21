@@ -2,7 +2,7 @@
 test the information theory functions
 """
 import numpy as np
-from fusion.custom.implicit.importance import information as it
+from fusion.implicit.importance import information as it
 
 
 x = np.array([1, 1, 1, 2, 3, 3, 4, 5, 5, 5])
