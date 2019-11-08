@@ -4,6 +4,7 @@ util functions related to information theory
 """
 
 import numpy as np
+import pandas as pd
 from .util import get_counts, get_probs
 
 
@@ -32,6 +33,21 @@ def entropy(x, base=None):
     if 1 in p:  # one class has 100% probability => all others 0.0
         return 0
     ret = -(p * np.log(p)).sum()
+    if base is not None:
+        ret /= np.log(base)
+    return ret
+
+
+def entropy_p(p, base=None, ax=1):
+    """ entropy given series of probabilities """
+    p = p[p > 0]
+    shape = list(np.shape(p))
+    if len(shape) < 2:
+        p = pd.Series(p)
+        p = p.values.reshape((1, shape[0]))
+    if 1 in p:  # one class has 100% probability => all others 0.0
+        return 0
+    ret = -(p * np.log(p)).sum(ax)
     if base is not None:
         ret /= np.log(base)
     return ret
@@ -107,6 +123,40 @@ def info_gain_ratio(x, y, impurity):
     return info_gain(x, y, impurity) / impurity(x)
 
 
+def contingency_info_gain(crosstabs, norm=False, base_axis=0):
+    """
+    info gain given 2-dim cross tabulations
+
+    Parameters
+    ----------
+    crosstabs: array-like
+        table of cross-tabluations/counts between 2 variables
+    norm: boolean (default=False)
+        normalize data by base entropy (return info_gain_ratio, ie. Theils' U)
+    base_axis: int (default=0)
+        reference axis for calculations
+
+    Returns
+    -------
+        info_gain or info_gain_ratio
+    """
+    informed_axis = 0 if base_axis else 1
+    crosstabs = np.asanyarray(crosstabs)
+    n = crosstabs.sum()
+    ptabs = crosstabs / n
+    base_probs = ptabs.sum(axis=base_axis)
+    informed_probs = ptabs.sum(axis=informed_axis)
+    oriented_data = crosstabs if base_axis else crosstabs.T
+    marginal_probs = oriented_data / crosstabs.sum(axis=informed_axis)
+    marginal_entropies = np.apply_along_axis(entropy_p, 0, marginal_probs)
+    conditional_entropy = marginal_entropies.dot(informed_probs)
+    gain = entropy_p(base_probs) - conditional_entropy
+    if norm:
+        return gain / entropy_p(base_probs)
+    else:
+        return gain
+
+
 def _midd(x, y):
     return -entropy(list(zip(x, y))) + entropy(x) + entropy(y)
 
@@ -134,7 +184,7 @@ def _ent_hat(x):
     """ binary pseudo entropy """
     n = np.shape(x)[0]
     _, counts = get_counts(x)
-    return np.log(n) - np.sum(vxsi(counts, n))
+    return np.log(n) - np.sum(_vxsi(counts, n))
 
 
 def _info_gain_hat(x, y):

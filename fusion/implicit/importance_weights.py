@@ -12,7 +12,7 @@ from sklearn.linear_model import LinearRegression, LogisticRegression
 from sklearn.tree import DecisionTreeRegressor, DecisionTreeClassifier
 from sklearn.preprocessing import LabelEncoder
 
-from fusion.implicit.importance import information as it
+from fusion.utils import information as it
 
 
 def supervised_imp_wgts(data, target, method, **kwargs):

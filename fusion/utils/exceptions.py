@@ -16,6 +16,12 @@ class NotFittedError(ValueError, AttributeError):
     """
 
 
+class DataFormError(ValueError, AttributeError):
+    """
+    Exception raised when data format/shape is not what's expected
+    """
+
+
 class FitFailedWarning(RuntimeWarning):
     """
     Warning class used if there is an error while fitting the fusion estimator.

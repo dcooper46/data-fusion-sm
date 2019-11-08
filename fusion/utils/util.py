@@ -46,6 +46,21 @@ def check_X_y(X, y, multi_output=False):
     return X, y
 
 
+def check_association_inputs(data: pd.DataFrame, target):
+    if isinstance(target, str):
+        ret_target = data[target]
+        ret_data = data.drop(target, axis=1)
+    elif isinstance(target, int):
+        ret_target = data[data.columns[target]]
+        ret_data = data.drop(data.columns[target], axis=1)
+    elif isinstance(target, (pd.Series, np.ndarray)):
+        ret_target = target
+    else:
+        raise ValueError(
+            "invalid target given, {} with dataframe".format(target))
+    return ret_data, ret_target
+
+
 def get_counts(x):
     """
     count each distinct value in a discrete array/series.

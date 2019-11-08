@@ -33,6 +33,7 @@ def neighbors(scores_mat, k, minimize=True, **kwargs):
     """
     nrecips, ndonors = scores_mat.shape
     matches = []
+    matched_scores = []
     used = np.ones(ndonors)
 
     comp = operator.le if minimize else operator.ge
@@ -52,9 +53,10 @@ def neighbors(scores_mat, k, minimize=True, **kwargs):
             raise ValueError("unrecognized value for k: {}".format(k))
         matched_id = np.random.choice(neighborhood, p=kwargs.get('probs'))
         matches.append((recip_id, matched_id))
+        matched_scores.append(scores[matched_id])
         used[matched_id] += kwargs.get("penalty", 1)
 
-    return matches
+    return matches, matched_scores
 
 
 def nearest(scores_mat, minimize=True, **kwargs):
@@ -74,24 +76,3 @@ def nearest(scores_mat, minimize=True, **kwargs):
         final matching pairs of records
     """
     return neighbors(scores_mat, 1, minimize, **kwargs)
-
-
-def nested(donors, recipients, metric, minimize=True, **kwargs):
-    switch = operator.lt if minimize else operator.gt
-    matches = []
-    used = {}
-    for recip in recipients:
-        match = None
-        for donor in donors:
-            if match is None:
-                score = metric(recip, donor, used, **kwargs)
-                match = (donor, score)
-            else:
-                new_score = metric(recip, donor, used, **kwargs)
-                if switch(new_score, match[1]):
-                    match = (donor, new_score)
-        if match is not None:
-            matches.append((recip, match[0]))
-            used[match[0]] = used.get(match[0], 0) + 1
-
-    return matches
