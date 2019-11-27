@@ -1,35 +1,30 @@
 """
-Perform  Implicit Data Fusion by matching data records according
-to a similarity score based on common linking variables.
+data fusion via hot-deck imputation by
+finding similar records and donating the live (thus hot)
+information from one source to the other
 """
 from __future__ import division, absolute_import
 
-from collections import Counter
+import warnings
 
 import pandas as pd
 import numpy as np
 from sklearn.metrics import pairwise_distances
 
-from fusion.implicit import neighbors as nb
-from fusion.implicit import linear_assignment as la
-from fusion.implicit import importance_weights as iw
+from fusion.implicit_model.base import BaseImplicitModel, ImplicitModelMixin
+from fusion.implicit_model import neighbors as nb
+from fusion.implicit_model import linear_assignment as la
+from fusion.implicit_model.importance_weights import (
+    supervised_imp_wgts as s_iw, unsupervised_imp_wgts as u_iw
+)
 from fusion.utils.exceptions import NotFittedError, DataFormError
-from fusion.data.formatting import encode_columns
 
 
-MATCH_METHODS = ["nearest", "neighbors", "hungarian", "jonker_volgenant"]
-
-LOCAL_SCORE_METHODS = {"gower": None, "exact": None}
-
-SKLEARN_SCORE_METHODS = {"cosine", "euclidean", "manhattan"}
-
-IMPORTANCE_METHODS = ["entropy", "gini", "info_gain", "linear", "tree"]
-
-
-class HotDeck:
+class HotDeck(ImplicitModelMixin, BaseImplicitModel):
     """
     fuse two data sources together using
-    information implicit to each
+    statistical matching (hot-deck imputation) based on record
+    similarity/distances and information implicit to each
 
     Parameters
     ----------
@@ -37,7 +32,7 @@ class HotDeck:
         'nearest', 'neighbors', 'hungarian', 'jonker_volgenant'
         algorithm used to match records from each data source
 
-    score_method: str, callable, optional (default 'euclidean')
+    score_method: str, callable, optional (default 'cosine')
         similarity/distance measure to compare records.
         Can be any metric available in
         `scipy.spatial.distance
@@ -60,13 +55,14 @@ class HotDeck:
 
     imp_wgts: array-like[float]
     """
+
     def __init__(
-            self, match_method="nearest", score_method="jaccard",
+            self, match_method="nearest", score_method="cosine",
             minimize=True, importance=None
     ):
         self.match_method = match_method
-        if score_method in LOCAL_SCORE_METHODS:
-            self.score_method = LOCAL_SCORE_METHODS[score_method]
+        if score_method in self.local_score_methods:
+            self.score_method = self.local_score_methods[score_method]
         else:
             self.score_method = score_method
         self.importance = importance
@@ -80,7 +76,8 @@ class HotDeck:
 
     def fit(self, donors, recipients,
             linking=None, critical=None, imp_wgts=None,
-            target=None, match_args=None, score_args=None):
+            target=None, match_args=None, score_args=None,
+            donor_id_col: int = 0, recipient_id_col: int = 0):
         """
         Fuse two data sources by matching records
 
@@ -117,6 +114,12 @@ class HotDeck:
             For a list of scoring functions that can be used,
             look at `sklearn.metrics`.
 
+        ppc_id_col: int = 0
+            Index of column serving as donor record index
+
+        panel_id_col: int = 0
+            Index of column serving as recipient record index
+
         Returns
         -------
         self: object
@@ -130,8 +133,14 @@ class HotDeck:
         kwargs = {"match_args": match_args if match_args else {},
                   "score_args": score_args if score_args else {}}
 
-        donrs, recips, linking = _check_data(
-            donors, recipients, self.score_method, linking
+        donor_id = donors.columns[donor_id_col]
+        recipient_id = recipients.columns[recipient_id_col]
+
+        donrs, recips, linking = self.check_data(
+            donors.drop(donor_id, axis=1),
+            recipients.drop(recipient_id, axis=1),
+            self.score_method,
+            linking
         )
 
         self.linking = linking
@@ -146,10 +155,12 @@ class HotDeck:
             try:
                 self.imp_wgts = pd.Series(imp_wgts)
                 self.imp_wgts.index = linking
-            except ValueError:
+            except ValueError as e:
                 raise DataFormError(
                     "passed number of weights, %d, does not match number"
-                    "of liking variables, %d" % (len(imp_wgts), len(linking))
+                    "of liking variables, %d: \n%s" % (
+                        len(imp_wgts), len(linking), e
+                    )
                 )
         else:
             if not self.importance:
@@ -163,20 +174,32 @@ class HotDeck:
                 recips_iw = recips.drop(
                     self.critical, axis=1) if critical else recips
                 if target:
-                    imp_wgts = iw.s_iw(donrs_iw, target, self.importance)
+                    imp_wgts = s_iw(donrs_iw, target, self.importance)
                 else:
-                    imp_wgts = iw.u_iw(
+                    imp_wgts = u_iw(
                         pd.concat([donrs_iw, recips_iw]), self.importance
                     )
                 self.imp_wgts = imp_wgts
 
-        kwargs["score_args"]["method"] = self.score_method
+        kwargs["score_args"]["method"] = kwargs["score_args"].get(
+            "method", self.score_method)
         kwargs["score_args"]["wgts"] = self.imp_wgts
-        kwargs["match_args"]["method"] = self.match_method
+        kwargs["match_args"]["method"] = kwargs["match_args"].get(
+            "method", self.match_method)
         kwargs["match_args"]["minimize"] = self.minimize
 
-        matches, scores, usage = _get_matches(donrs, recips, self.critical, **kwargs)
-        self.matches = pd.DataFrame(matches, columns=["recipient_id", "donor_id"])
+        _matches, scores, usage = self.get_matches(
+            donrs, recips, self.critical, **kwargs)
+        recip_ids, donor_ids = zip(*_matches)
+        matched_donors = donors.iloc[list(donor_ids)].reset_index(drop=True)[
+            donor_id]
+        matched_recipients = recipients.iloc[list(recip_ids)].reset_index(drop=True)[
+            recipient_id]
+
+        self._matches = pd.DataFrame(
+            _matches, columns=[recipient_id, donor_id])
+        self.matches = pd.DataFrame(zip(matched_recipients, matched_donors),
+                                    columns=[recipient_id, donor_id])
         self.scores = scores
         self.usage = usage
         return self
@@ -209,7 +232,7 @@ class HotDeck:
                 "This PpcFusion instance is not fitted yet. Call 'fit' with"
                 "appropriate arguments before using this method."
             )
-        recip_ids, donor_ids = zip(*self.matches)
+        recip_ids, donor_ids = zip(*self._matches.values)
         matched_donors = donors.iloc[list(donor_ids)].reset_index(drop=True)
         out_recips = recipients.iloc[list(recip_ids)].reset_index(drop=True)
         if target:
@@ -218,118 +241,65 @@ class HotDeck:
             ret = out_recips.join(matched_donors, rsuffix="_d")
         return ret
 
-    def fit_transform(self, donors, recipients, linking=None, critical=None,
-                      target=None, match_args=None, score_args=None):
-        """
-        Fit fusion model and transform recipient data with donated info
-        Short-cut for cls.fit().transform()
-        """
-        self.fit(
-            donors, recipients, linking, critical,
-            target, match_args, score_args
+    def _match_full(self, donors, recipients, **kwargs):
+        score_args = kwargs["score_args"]
+        score_method = score_args["method"]
+        _score_args = {k: v for k, v in score_args.items()
+                       if k != "method"}
+        scores_mat = self._score_records(
+            recipients, donors, score_method, **_score_args
         )
-        return self.transform(donors, recipients, target)
 
-
-def _check_data(donors, recipients, score_method, linking=None):
-    """
-    ensure data to be fused is appropriate for requested methods
-    """
-    if not linking:
-        d_cols = donors.columns
-        r_cols = recipients.columns
-        linking = list(set(d_cols).intersection(r_cols))
-    if score_method not in ["gower", "exact"]:
-        donors, d_ecols = encode_columns(donors[linking])
-        recipients, r_ecols = encode_columns(recipients[linking])
-        linking = list(set(d_ecols).intersection(r_ecols))
-    return donors[linking], recipients[linking], linking
-
-
-def _get_matches(donors, recipients, critical, **kwargs):
-    if critical is None or critical == []:
-        donors["groupby"] = -1
-        recipients["groupby"] = -1
-        critical = "groupby"
-    matches, scores = _match_critical(donors, recipients, critical, **kwargs)
-    _, matched_donors = zip(*matches)
-    usage = Counter(matched_donors)
-    return matches, scores, usage
-
-
-def _match_critical(donors, recipients, critical, **kwargs):
-    donor_cells = donors.groupby(critical, sort=False)
-    recip_cells = recipients.groupby(critical, sort=False)
-    matches = []
-    scores = []
-    for cc_idx, r_cc in recip_cells:
-        d_cc = donor_cells.get_group(cc_idx).drop(critical, axis=1)
-        r_cc = r_cc.drop(critical, axis=1)
-        d_cc_ids = donor_cells.indices[cc_idx]
-        r_cc_ids = recip_cells.indices[cc_idx]
-        cell_matches, cell_scores = _match_full(d_cc, r_cc, **kwargs)
-        cell_matched_ids = [(r_cc_ids[i], d_cc_ids[j])
-                            for i, j in cell_matches]
-        matches.extend(cell_matched_ids)
-        scores.extend(cell_scores)
-    return matches, scores
-
-
-def _match_full(donors, recipients, **kwargs):
-    score_args = kwargs["score_args"]
-    score_method = score_args["method"]
-    imp_wgts = score_args["wgts"]
-    _score_args = {k: v for k, v in score_args.items()
-                   if k not in ("method", "wgts")}
-    scores_mat = _score_records(
-        recipients, donors, score_method, imp_wgts, **_score_args
-    )
-
-    match_args = kwargs["match_args"]
-    match_method = match_args["method"]
-    minimize = match_args["minimize"]
-    _match_args = {k: v for k, v in match_args.items()
-                   if k not in ("method", "minimize")}
-    if match_method not in MATCH_METHODS:
-        raise ValueError(
-            "invalid matching method."
-            "Possible values are {}".format(",".join(MATCH_METHODS))
-        )
-    if match_method == 'nearest':
-        matches = nb.nearest(scores_mat, minimize, **_match_args)
-    elif match_method == 'neighbors':
-        try:
-            k = _match_args.pop('k')
-            matches = nb.neighbors(
-                scores_mat, k, minimize, **_match_args
-            )
-        except KeyError:
+        match_args = kwargs["match_args"]
+        match_method = match_args["method"]
+        minimize = match_args["minimize"]
+        _match_args = {k: v for k, v in match_args.items()
+                       if k not in ("method", "minimize")}
+        if match_method not in self.match_methods:
             raise ValueError(
-                "neighborhood matching selected but"
-                "missing value for the number of neighbors"
+                "invalid matching method."
+                "Possible values are {}".format(",".join(self.match_methods))
             )
-    elif match_method in la.methods:
-        matches, scores = la.lap(match_method, scores_mat, minimize)
-    else:
-        raise NotImplementedError(
-            "the chosen method is not currently"
-            "available: {}".format(match_method)
-        )
-    return matches, scores
-
-
-def _score_records(x, y, metric, wgts, **kwargs):
-    if metric in SKLEARN_SCORE_METHODS:
-        if metric == 'manhattan':
-            wgt_scl = wgts
+        if match_method == 'nearest':
+            matches, scores = nb.nearest(scores_mat, minimize, **_match_args)
+        elif match_method == 'neighbors':
+            try:
+                k = _match_args.pop('k')
+                matches, scores = nb.neighbors(
+                    scores_mat, k, minimize, **_match_args
+                )
+            except KeyError as e:
+                warnings.warn(
+                    "neighborhood matching selected but"
+                    "missing value for the number of neighbors: " + str(e) +
+                    "  Using default value of 5"
+                )
+                matches, scores = nb.neighbors(
+                    scores_mat, minimize=minimize, **_match_args
+                )
+        elif match_method in la.methods:
+            matches, scores = la.lap(match_method, scores_mat, minimize)
         else:
-            wgt_scl = np.sqrt(wgts)
+            raise NotImplementedError(
+                "the chosen method is not currently"
+                "available: {}".format(match_method)
+            )
+        return matches, scores
+
+    def _score_records(self, x, y, metric, **kwargs):
+        # possibly utilize spark here
+        wgts = kwargs.pop("wgts")
+        if metric in self.sklearn_score_methods:
+            if metric == 'manhattan':
+                wgt_scl = wgts
+            else:
+                wgt_scl = np.sqrt(wgts)
+            return pairwise_distances(
+                x*wgt_scl, y*wgt_scl, metric,
+                n_jobs=kwargs.get("n_jobs", -1), **kwargs
+            )
         return pairwise_distances(
-            x*wgt_scl, y*wgt_scl, metric,
-            n_jobs=kwargs.get("n_jobs", -1), **kwargs
+            x.values, y.values, metric,
+            n_jobs=kwargs.get("n_jobs", -1),
+            w=wgts, **kwargs
         )
-    return pairwise_distances(
-        x, y, metric,
-        n_jobs=kwargs.get("n_jobs", -1),
-        w=wgts, **kwargs
-    )

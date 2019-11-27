@@ -4,7 +4,8 @@ Methods that solve matching as a
 """
 import numpy as np
 from scipy.optimize import linear_sum_assignment
-from . jonker_volgenant import lapjv
+# from . jonker_volgenant import lapjv
+from lap import lapjv
 
 
 methods = ['hungarian', 'jonker_volgenant']
@@ -103,11 +104,17 @@ def jonker_volgenant(scores_mat, minimize=True):
         elif nrecip > ndonor:
             n_add_ons = nrecip - ndonor
             select_donors = np.concatenate((donor_ids, top_donors[:n_add_ons]))
-        row_ind, col_ind, _ = lapjv(scores_mat[:, select_donors])
-        matches = np.column_stack((row_ind.T, donor_ids[col_ind]))
-        scores = scores_mat[row_ind, col_ind]
+        # row_ind, col_ind, _ = lapjv(scores_mat[:, select_donors])
+        # matches = np.column_stack((row_ind.T, donor_ids[col_ind]))
+        rows = np.array([range(nrecip)]).T
+        _, row_ind, _ = lapjv(scores_mat[:, select_donors])
+        matches = np.column_stack((row_ind, donor_ids[row_ind]))
+        scores = scores_mat[rows, row_ind]
     else:
-        row_ind, col_ind, _ = lapjv(scores_mat)
-        matches = np.column_stack((row_ind, col_ind))
-        scores = scores_mat[row_ind, col_ind]
+        # row_ind, col_ind, _ = lapjv(scores_mat)
+        # matches = np.column_stack((row_ind, col_ind))
+        rows = np.array([range(nrecip)]).T
+        _, row_ind, _ = lapjv(scores_mat)
+        matches = np.column_stack((rows, row_ind))
+        scores = scores_mat[rows, row_ind]
     return matches, scores

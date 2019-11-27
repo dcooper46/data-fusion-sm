@@ -47,7 +47,7 @@ def supervised_imp_wgts(data, target, method, **kwargs):
             wgts.append(it.info_gain(_data[c], _target, impurity))
         wgts = pd.Series(wgts, index=_data.columns)
     elif method in ('linear', 'tree'):
-        model = _get_model(method, data, target)
+        model = _get_model(method, _data, _target)
         wgts = model.feature_importances
     else:
         wgts = pd.Series(np.ones(len(_data.columns)), index=_data.columns)

@@ -13,7 +13,7 @@ def _scale_penalty(x, flatness):
     return np.sinh(x) / (flatness * np.cosh(x))
 
 
-def neighbors(scores_mat, k, minimize=True, **kwargs):
+def neighbors(scores_mat, k=5, minimize=True, **kwargs):
     """
     select matching pair from neighborhood of possible matches
 

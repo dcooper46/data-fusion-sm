@@ -22,7 +22,7 @@ def test_entropy():
 
 
 def test_efficiency():
-    assert np.isclose(it.efficiency(x), 0.1505, rtol=1e-4)
-    assert np.isclose(it.efficiency(x, base=2), 0.2171, rtol=1e-4)
-    assert np.isclose(it.efficiency(y), 0.0673, rtol=1e-4)
-    assert np.isclose(it.efficiency(y, base=2), 0.0971, rtol=1e-4)
+    assert np.isclose(it.efficiency(x), 0.935, rtol=1e-4)
+    assert np.isclose(it.efficiency(x, base=2), 1.3489, rtol=1e-4)
+    assert np.isclose(it.efficiency(y), 0.971, rtol=1e-4)
+    assert np.isclose(it.efficiency(y, base=2), 1.4008, rtol=1e-4)

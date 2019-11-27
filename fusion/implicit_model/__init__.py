@@ -7,6 +7,7 @@ can be used for further analysis.  Macro fusion, estimating the joint
 probability distribution of all variables for inference, will be a
 future enhancement.
 """
-from fusion.implicit.hot_deck import HotDeck
+from fusion.implicit_model.hot_deck import HotDeck
+from fusion.implicit_model.pmm import PMM
 
-__all__ = ["HotDeck"]
+__all__ = ["HotDeck", "PMM"]
