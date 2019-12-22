@@ -21,11 +21,43 @@ def _build_model(X, y, method, **kwargs):
 
 class PMM(ImplicitModelMixin, BaseImplicitModel):
     """
+    fuse two data sources together using Predictive Mean Matching.
+    First, a model for the target is trained on the donor data.  Then
+    applied to both the donor and recipient data sets.  Statistical Matching
+    (hot-deck imputation) is then performed, based on record
+    similarity/distances on the predicted target values.  Live values from the
+    donor data is then imputed for the recipient.
 
+    Parameters
+    ----------
+    match_method: str (default='nearest')
+        'nearest', 'neighbors', 'hungarian', 'jonker_volgenant'
+        algorithm used to match records from each data source
+
+    score_method: str, callable, optional (default 'euclidean')
+        similarity/distance measure to compare records.
+        Can be any metric available in
+        `scipy.spatial.distance
+        <https://docs.scipy.org/doc/scipy/reference/spatial.distance.html#module-scipy.spatial.distance>`_
+        or
+        `sklearn.metrics <https://scikit-learn.org/stable/modules/classes.html#pairwise-metrics>`_
+
+    model_method: str, optional (default None)
+        Type/class of model used for predicting the target variable.
+
+    Attributes
+    ----------
+    critical: array-like[str]
+
+    matches: array-like[tuple[str, str]]
+
+    usage: Counter
+
+    imp_wgts: array-like[float]
     """
     def __init__(
         self, targets, match_method="nearest", score_method="euclidean",
-        model_method="linear"
+        model_method=None
     ):
         self.targets = targets.split(",")
         self.match_method = match_method
@@ -40,7 +72,51 @@ class PMM(ImplicitModelMixin, BaseImplicitModel):
             match_args=None, score_args=None, model_args=None,
             donor_id_col: int = 0, recipient_id_col: int = 0):
         """
+        Fuse two data sources by matching records
 
+        Parameters
+        ----------
+        donors: pandas.DataFrame
+            Records containing information to be donated
+
+        recipients: pandas.DataFrame
+            Records that will receive information
+
+        linking: array-like, optional (default=None)
+            List of columns that will link the two data sources
+            if None, all overlapping columns will be used
+
+        critical: array-like, optional (default=None)
+            Features that must match exactly when fusing
+
+        match_args: dict, optional (default=None)
+            Additional arguments for matching algorithm
+            See the modules in :mod:`fusion.implicit.matching` for the
+            list of possible matching parameters.
+
+        score_args: dict, optional (default=None)
+            Additional arguments for scoring method
+            For a list of scoring functions that can be used,
+            look at `sklearn.metrics`.
+
+        model_args: dict, optional (default=None)
+            Additional arguments for the target model.
+
+        ppc_id_col: int = 0
+            Index of column serving as donor record index
+
+        panel_id_col: int = 0
+            Index of column serving as recipient record index
+
+        Returns
+        -------
+        self: object
+
+        Notes
+        -----
+        The data contained in donors and recipients is assumed to have
+        at least a few overlapping features with common values.  They should
+        also contain an `id` column appropriately titled.
         """
         try:
             targets = [(t, donors[t]) for t in self.targets]
@@ -95,7 +171,21 @@ class PMM(ImplicitModelMixin, BaseImplicitModel):
 
     def transform(self, donors, recipients):
         """
+         Using fused ids, impute information from donor data to the
+        recipient data.
 
+        Parameters
+        ----------
+        donors: pandas.DataFrame
+            Records containing information to be donated
+
+        recipients: pandas.DataFrame
+            Records that will receive information
+
+        Returns
+        -------
+        ret: pandas.DataFrame
+            New DataFrame containing dontated information
         """
         if self.results is None:
             raise NotFittedError(
@@ -112,7 +202,7 @@ class PMM(ImplicitModelMixin, BaseImplicitModel):
 
     def _match_full(self, donors, recipients, **kwargs):
         model_args = kwargs["model_args"]
-        model_method = model_args["method"]
+        model_method = model_args["method"] if model_args["method"] else "linear"
         target = model_args["target"].iloc[donors.index]
 
         _model_args = {k: v for k, v in model_args.items()

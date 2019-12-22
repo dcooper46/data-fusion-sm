@@ -14,7 +14,7 @@ from sklearn.metrics import pairwise_distances
 from fusion.implicit_model.base import BaseImplicitModel, ImplicitModelMixin
 from fusion.implicit_model import neighbors as nb
 from fusion.implicit_model import linear_assignment as la
-from fusion.implicit_model.importance_weights import (
+from fusion.importance_weights import (
     supervised_imp_wgts as s_iw, unsupervised_imp_wgts as u_iw
 )
 from fusion.utils.exceptions import NotFittedError, DataFormError
@@ -55,7 +55,6 @@ class HotDeck(ImplicitModelMixin, BaseImplicitModel):
 
     imp_wgts: array-like[float]
     """
-
     def __init__(
             self, match_method="nearest", score_method="cosine",
             minimize=True, importance=None
@@ -181,23 +180,17 @@ class HotDeck(ImplicitModelMixin, BaseImplicitModel):
                     )
                 self.imp_wgts = imp_wgts
 
-        kwargs["score_args"]["method"] = kwargs["score_args"].get(
-            "method", self.score_method)
+        kwargs["score_args"]["method"] = kwargs["score_args"].get("method", self.score_method)
         kwargs["score_args"]["wgts"] = self.imp_wgts
-        kwargs["match_args"]["method"] = kwargs["match_args"].get(
-            "method", self.match_method)
+        kwargs["match_args"]["method"] = kwargs["match_args"].get("method", self.match_method)
         kwargs["match_args"]["minimize"] = self.minimize
 
-        _matches, scores, usage = self.get_matches(
-            donrs, recips, self.critical, **kwargs)
+        _matches, scores, usage = self.get_matches(donrs, recips, self.critical, **kwargs)
         recip_ids, donor_ids = zip(*_matches)
-        matched_donors = donors.iloc[list(donor_ids)].reset_index(drop=True)[
-            donor_id]
-        matched_recipients = recipients.iloc[list(recip_ids)].reset_index(drop=True)[
-            recipient_id]
+        matched_donors = donors.iloc[list(donor_ids)].reset_index(drop=True)[donor_id]
+        matched_recipients = recipients.iloc[list(recip_ids)].reset_index(drop=True)[recipient_id]
 
-        self._matches = pd.DataFrame(
-            _matches, columns=[recipient_id, donor_id])
+        self._matches = pd.DataFrame(_matches, columns=[recipient_id, donor_id])
         self.matches = pd.DataFrame(zip(matched_recipients, matched_donors),
                                     columns=[recipient_id, donor_id])
         self.scores = scores
