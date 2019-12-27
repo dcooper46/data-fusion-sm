@@ -4,8 +4,8 @@ methods to compare categorical variables with statistical measures
 import numpy as np
 import pandas as pd
 
-from fusion.utils.information import contingency_info_gain
-from fusion.utils.util import check_association_inputs
+from datafusionsm.utils.information import contingency_info_gain
+from datafusionsm.utils.util import check_association_inputs
 
 
 def pairwise_associations(data, target):

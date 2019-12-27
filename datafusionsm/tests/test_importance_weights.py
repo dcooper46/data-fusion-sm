@@ -5,7 +5,7 @@ import numpy as np
 import pandas as pd
 from pandas.testing import assert_series_equal, assert_index_equal
 
-from fusion.implicit_model import importance_weights as iw
+from datafusionsm.implicit_model import importance_weights as iw
 
 
 y1 = np.array([0, 1, 0, 1, 1, 0, 1, 0, 1, 1])

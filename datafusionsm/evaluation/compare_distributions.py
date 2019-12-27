@@ -34,7 +34,7 @@ def overlap(p, q):
     return 1 - total_variation(p, q)
 
 
-def compare_distributions(p, q):
+def compare_dists(p, q):
     """
     comparison summary between two distributions detailing
     how close they are.

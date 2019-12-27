@@ -1,6 +1,6 @@
 """
-The :mod:`fusion.util.exceptions` module includes all custom warnings and error
-classes used across fusion.
+The :mod:`datafusion.util.exceptions` module includes all custom warnings and
+error classes used across fusion.
 """
 
 __all__ = ['NotFittedError',

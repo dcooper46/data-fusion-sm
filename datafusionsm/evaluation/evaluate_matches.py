@@ -1,3 +1,4 @@
+""" compare matching features of fused records """
 from itertools import permutations
 import pandas as pd
 import numpy as np
@@ -65,9 +66,9 @@ def _create_result_set(perms, feats):
     return results
 
 
-def demo_accuracy(matches, donors, recipients, feats):
+def match_accuracy(matches, donors, recipients, feats):
     """
-    Calculate and display the accuracy of the expected demographics
+    Calculate and display the accuracy of the expected matching variables
     post-fusion.
 
     Parameters
@@ -82,20 +83,20 @@ def demo_accuracy(matches, donors, recipients, feats):
         receiving records
 
     feats: array-like
-        what demographic features were fused on and should be evaluated
+        what features were fused on and should be evaluated
 
     Returns
     -------
     str
-        formatted output string containing demographic evaluation
+        formatted output string containing feature evaluation
     results: pandas.DataFrame
-        detailed counts of demographic matches
+        detailed counts of feature matches
     """
 
-    fused_demos = _join_panels(matches, donors, recipients)
+    fused = _join_panels(matches, donors, recipients)
 
     unique_values, perms = _permute_values(donors, feats)
-    matched_demo_counts = _get_fused_counts(fused_demos, feats)
+    matched_counts = _get_fused_counts(fused, feats)
     results = _create_result_set(perms, feats)
 
     out_buffer = []
@@ -110,7 +111,7 @@ def demo_accuracy(matches, donors, recipients, feats):
             row, col = perm
             idx = results.loc[(results['recipient'] == row) &
                               (results['donor'] == col)].index
-            cnt = matched_demo_counts[feat].get((row, col), 0)
+            cnt = matched_counts[feat].get((row, col), 0)
             counts[row][col] = cnt
             results.loc[idx, 'count'] = cnt
 

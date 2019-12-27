@@ -6,11 +6,11 @@ import warnings
 import pandas as pd
 from sklearn.metrics import pairwise_distances
 
-from fusion.implicit_model.base import BaseImplicitModel, ImplicitModelMixin
-from fusion.implicit_model import neighbors as nb
-from fusion.implicit_model import linear_assignment as la
-from fusion.utils.exceptions import NotFittedError
-from fusion.utils.model import get_model, train_model, predict
+from datafusionsm.implicit_model.base import BaseImplicitModel, ImplicitModelMixin
+from datafusionsm.implicit_model import neighbors as nb
+from datafusionsm.implicit_model import linear_assignment as la
+from datafusionsm.utils.exceptions import NotFittedError
+from datafusionsm.utils.model import get_model, train_model, predict
 
 
 def _build_model(X, y, method, **kwargs):

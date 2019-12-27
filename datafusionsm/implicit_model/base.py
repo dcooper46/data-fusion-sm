@@ -1,7 +1,7 @@
 """ Base classes for implicit_models """
 from collections import Counter
 
-from fusion.utils.formatting import encode_columns
+from datafusionsm.utils.formatting import encode_columns
 
 
 class BaseImplicitModel:

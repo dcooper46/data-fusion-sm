@@ -11,8 +11,8 @@ required = [
 ]
 
 setup(
-    name='fusion',
-    version='1.0.0',
+    name='datafusionsm',
+    version='0.4.0',
     author="Daniel Cooper",
     author_email="djcoop46@yahoo.com",
     install_requires=required,

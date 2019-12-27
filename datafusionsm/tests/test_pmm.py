@@ -3,8 +3,8 @@ import pandas as pd
 import pytest
 from sklearn.svm import SVC
 
-from fusion.implicit_model import PMM
-from fusion.utils.formatting import encode_columns
+from datafusionsm.implicit_model import PMM
+from datafusionsm.utils.formatting import encode_columns
 
 
 donors = pd.DataFrame(25 * [

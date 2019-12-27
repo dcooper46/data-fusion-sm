@@ -11,13 +11,13 @@ import pandas as pd
 import numpy as np
 from sklearn.metrics import pairwise_distances
 
-from fusion.implicit_model.base import BaseImplicitModel, ImplicitModelMixin
-from fusion.implicit_model import neighbors as nb
-from fusion.implicit_model import linear_assignment as la
-from fusion.importance_weights import (
+from datafusionsm.implicit_model.base import BaseImplicitModel, ImplicitModelMixin
+from datafusionsm.implicit_model import neighbors as nb
+from datafusionsm.implicit_model import linear_assignment as la
+from datafusionsm.importance_weights import (
     supervised_imp_wgts as s_iw, unsupervised_imp_wgts as u_iw
 )
-from fusion.utils.exceptions import NotFittedError, DataFormError
+from datafusionsm.utils.exceptions import NotFittedError, DataFormError
 
 
 class HotDeck(ImplicitModelMixin, BaseImplicitModel):

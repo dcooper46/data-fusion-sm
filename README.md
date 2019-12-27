@@ -1,2 +1,3 @@
-# data-fusion
-Generic framework to allow the fusion of multiple panels or surveys.
+# data-fusion-sm
+Generic framework to allow the fusion of multiple data sources using statistical
+matching techniques.

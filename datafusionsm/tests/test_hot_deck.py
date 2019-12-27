@@ -5,7 +5,7 @@ from numpy import testing as tst
 import pandas as pd
 import pytest
 
-from fusion.implicit_model import HotDeck
+from datafusionsm.implicit_model import HotDeck
 
 
 donors = pd.DataFrame([
