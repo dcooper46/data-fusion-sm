@@ -32,10 +32,11 @@ def test_default_setup():
 
     tst.assert_equal(pmm.match_method, "nearest")
     tst.assert_equal(pmm.score_method, "euclidean")
-    tst.assert_equal(pmm.model_method, "linear")
+    tst.assert_equal(pmm.model_method, None)
 
     pmm.fit(donors, recipients)
 
+    tst.assert_equal(pmm.model_method, "linear")
     tst.assert_array_equal(pmm.critical, [])
     tst.assert_equal(len(pmm.linking), 6)
     tst.assert_equal(list(pmm.results)[0], "target")
@@ -142,7 +143,7 @@ def test_configurable_matching_args():
 
 
 def test_configurable_model_args():
-    for method, m_args in [("linear", {"C": 0.5, "l1_ratio": 0}),
+    for method, m_args in [("linear", {"C": 100, "fit_intercept": False}),
                            ("tree", {"max_depth": 10, "max_leaf_nodes": 3}),
                            ("forest", {"n_estimators": 5, "criterion": "entropy"})]:
         pmm = PMM("target", model_method=method)

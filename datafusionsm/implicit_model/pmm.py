@@ -202,16 +202,20 @@ class PMM(ImplicitModelMixin, BaseImplicitModel):
 
     def _match_full(self, donors, recipients, **kwargs):
         model_args = kwargs["model_args"]
-        model_method = model_args["method"] if model_args["method"] else "linear"
+        model_method = model_args["method"]
         target = model_args["target"].iloc[donors.index]
 
         _model_args = {k: v for k, v in model_args.items()
                        if k not in ("method", "target")}
         _target_model = model_args.get("model")
 
+        # no method set and no model passed
+        if not (model_method or _target_model):
+            self.model_method = "linear"
+
         target_model = (_target_model
                         if _target_model
-                        else _build_model(donors, target, model_method, **_model_args))
+                        else _build_model(donors, target, self.model_method, **_model_args))
         donor_preds = predict(target_model, donors)
         recipient_preds = predict(target_model, recipients)
 
