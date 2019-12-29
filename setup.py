@@ -10,7 +10,7 @@ with open("README.md", "r") as fh:
 required = ["pandas", "numpy", "scipy", "sklearn", "lap"]
 
 setup(
-    name='datafusionsm',
+    name='data-fusion-sm',
     version=datafusionsm.__version__,
     author="Daniel Cooper",
     author_email="djcoop46@yahoo.com",
