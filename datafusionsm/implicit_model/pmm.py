@@ -171,7 +171,7 @@ class PMM(ImplicitModelMixin, BaseImplicitModel):
 
     def transform(self, donors, recipients):
         """
-         Using fused ids, impute information from donor data to the
+        Using fused ids, impute information from donor data to the
         recipient data.
 
         Parameters

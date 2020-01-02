@@ -21,7 +21,7 @@ copyright = '2019, Daniel Cooper'
 author = 'Daniel Cooper'
 
 # The full version, including alpha/beta/rc tags
-release = '1.0.0'
+release = '0.4.0'
 
 
 # -- General configuration ---------------------------------------------------

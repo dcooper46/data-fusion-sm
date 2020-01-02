@@ -1,7 +1,7 @@
 .. module:: implicit
    :synopsis: Joining custom data sources via implicit fusion
 
-.. currentmodule:: fusion.implicit_model
+.. currentmodule:: datafusionsm.implicit_model
 
 Implicit Fusion
 ===============
