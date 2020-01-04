@@ -1,0 +1,345 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Hot Deck Imputation &mdash; data-fusion-sm 0.4.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Predictive Mean Matching" href="pmm.html" />
+    <link rel="prev" title="Implicit Fusion" href="implicit.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> data-fusion-sm
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="implicit.html">Implicit Fusion</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="implicit.html#hot-deck-imputation">Hot Deck Imputation</a><ul class="current">
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Hot Deck Imputation</a><ul class="simple">
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="implicit.html#predictive-mean-matching">Predictive Mean Matching</a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">data-fusion-sm</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="implicit.html">Implicit Fusion</a> &raquo;</li>
+        
+      <li>Hot Deck Imputation</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/hot_deck.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-datafusionsm.implicit_model.hot_deck">
+<span id="hot-deck-imputation"></span><h1>Hot Deck Imputation<a class="headerlink" href="#module-datafusionsm.implicit_model.hot_deck" title="Permalink to this headline">¶</a></h1>
+<p>data fusion via hot-deck imputation by
+finding similar records and donating the live (thus hot)
+information from one source to the other</p>
+<dl class="class">
+<dt id="datafusionsm.implicit_model.hot_deck.HotDeck">
+<em class="property">class </em><code class="sig-prename descclassname">datafusionsm.implicit_model.hot_deck.</code><code class="sig-name descname">HotDeck</code><span class="sig-paren">(</span><em class="sig-param">match_method='nearest'</em>, <em class="sig-param">score_method='cosine'</em>, <em class="sig-param">minimize=True</em>, <em class="sig-param">importance=None</em><span class="sig-paren">)</span><a class="headerlink" href="#datafusionsm.implicit_model.hot_deck.HotDeck" title="Permalink to this definition">¶</a></dt>
+<dd><p>fuse two data sources together using
+statistical matching (hot-deck imputation) based on record
+similarity/distances and information implicit to each</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>match_method</strong> (<em>str</em><em> (</em><em>default='nearest'</em><em>)</em>) – ‘nearest’, ‘neighbors’, ‘hungarian’, ‘jonker_volgenant’
+algorithm used to match records from each data source</p></li>
+<li><p><strong>score_method</strong> (<em>str</em><em>, </em><em>callable</em><em>, </em><em>optional</em><em> (</em><em>default 'cosine'</em><em>)</em>) – similarity/distance measure to compare records.
+Can be any metric available in
+<a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/spatial.distance.html#module-scipy.spatial.distance">scipy.spatial.distance</a>
+or
+<a class="reference external" href="https://scikit-learn.org/stable/modules/classes.html#pairwise-metrics">sklearn.metrics</a></p></li>
+<li><p><strong>minimize</strong> (<em>boolean</em><em> (</em><em>default=True</em><em>)</em>) – minimize distance between records or maximize score/similarity</p></li>
+<li><p><strong>importance</strong> (<em>str</em><em> (</em><em>default=None</em><em>)</em>) – </p></li>
+</ul>
+</dd>
+</dl>
+<dl class="attribute">
+<dt id="datafusionsm.implicit_model.hot_deck.HotDeck.critical">
+<code class="sig-name descname">critical</code><a class="headerlink" href="#datafusionsm.implicit_model.hot_deck.HotDeck.critical" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>array-like[str]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="datafusionsm.implicit_model.hot_deck.HotDeck.matches">
+<code class="sig-name descname">matches</code><a class="headerlink" href="#datafusionsm.implicit_model.hot_deck.HotDeck.matches" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>array-like[tuple[str, str]]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="datafusionsm.implicit_model.hot_deck.HotDeck.usage">
+<code class="sig-name descname">usage</code><a class="headerlink" href="#datafusionsm.implicit_model.hot_deck.HotDeck.usage" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>Counter</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="datafusionsm.implicit_model.hot_deck.HotDeck.imp_wgts">
+<code class="sig-name descname">imp_wgts</code><a class="headerlink" href="#datafusionsm.implicit_model.hot_deck.HotDeck.imp_wgts" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>array-like[float]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="datafusionsm.implicit_model.hot_deck.HotDeck.fit">
+<code class="sig-name descname">fit</code><span class="sig-paren">(</span><em class="sig-param">donors</em>, <em class="sig-param">recipients</em>, <em class="sig-param">linking=None</em>, <em class="sig-param">critical=None</em>, <em class="sig-param">imp_wgts=None</em>, <em class="sig-param">target=None</em>, <em class="sig-param">match_args=None</em>, <em class="sig-param">score_args=None</em>, <em class="sig-param">donor_id_col=0</em>, <em class="sig-param">recipient_id_col=0</em><span class="sig-paren">)</span><a class="headerlink" href="#datafusionsm.implicit_model.hot_deck.HotDeck.fit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fuse two data sources by matching records</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>donors</strong> (<em>pandas.DataFrame</em>) – Records containing information to be donated</p></li>
+<li><p><strong>recipients</strong> (<em>pandas.DataFrame</em>) – Records that will receive information</p></li>
+<li><p><strong>linking</strong> (<em>array-like</em><em>, </em><em>optional</em><em> (</em><em>default=None</em><em>)</em>) – List of columns that will link the two data sources
+if None, all overlapping columns will be used</p></li>
+<li><p><strong>critical</strong> (<em>array-like</em><em>, </em><em>optional</em><em> (</em><em>default=None</em><em>)</em>) – Features that must match exactly when fusing</p></li>
+<li><p><strong>imp_wgts</strong> (<em>array-like</em><em>, </em><em>dict</em><em>, </em><em>optional</em><em>(</em><em>default=None</em><em>)</em>) – Importance weights for linking variables</p></li>
+<li><p><strong>target</strong> (<em>string</em><em>, </em><em>array-like</em><em>, </em><em>optional</em><em> (</em><em>default=None</em><em>)</em>) – What information will be donated. When given here, serves
+as the reference column if calculating importance weights.
+If None, importance weights will be by individual columns.</p></li>
+<li><p><strong>match_args</strong> (<em>dict</em><em>, </em><em>optional</em><em> (</em><em>default=None</em><em>)</em>) – Additional arguments for matching algorithm
+See the modules in <code class="xref py py-mod docutils literal notranslate"><span class="pre">fusion.implicit.matching</span></code> for the
+list of possible matching parameters.</p></li>
+<li><p><strong>score_args</strong> (<em>dict</em><em>, </em><em>optional</em><em> (</em><em>default=None</em><em>)</em>) – Additional arguments for scoring method
+For a list of scoring functions that can be used,
+look at <cite>sklearn.metrics</cite>.</p></li>
+<li><p><strong>ppc_id_col</strong> (<em>int = 0</em>) – Index of column serving as donor record index</p></li>
+<li><p><strong>panel_id_col</strong> (<em>int = 0</em>) – Index of column serving as recipient record index</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>self</strong></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>object</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>The data contained in donors and recipients is assumed to have
+at least a few overlapping features with common values.  They should
+also contain an <cite>id</cite> column appropriately titled.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="datafusionsm.implicit_model.hot_deck.HotDeck.transform">
+<code class="sig-name descname">transform</code><span class="sig-paren">(</span><em class="sig-param">donors</em>, <em class="sig-param">recipients</em>, <em class="sig-param">target=None</em><span class="sig-paren">)</span><a class="headerlink" href="#datafusionsm.implicit_model.hot_deck.HotDeck.transform" title="Permalink to this definition">¶</a></dt>
+<dd><p>Using fused ids, impute information from donor data to the
+recipient data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>donors</strong> (<em>pandas.DataFrame</em>) – Records containing information to be donated</p></li>
+<li><p><strong>recipients</strong> (<em>pandas.DataFrame</em>) – Records that will receive information</p></li>
+<li><p><strong>target</strong> (<em>string</em><em>, </em><em>array-like</em><em>, </em><em>optional</em><em> (</em><em>default=None</em><em>)</em>) – What information will be shared from donor data.
+If None, data will be joined on fused indices and all
+overlapping fields from <cite>donors</cite> will have <cite>_d</cite> suffix.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>ret</strong> – New DataFrame containing dontated information</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>pandas.DataFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<div class="toctree-wrapper compound">
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="pmm.html" class="btn btn-neutral float-right" title="Predictive Mean Matching" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="implicit.html" class="btn btn-neutral float-left" title="Implicit Fusion" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, Daniel Cooper
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

@@ -1,0 +1,252 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>About fusion &mdash; data-fusion-sm 0.4.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> data-fusion-sm
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="implicit.html">Implicit Fusion</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">data-fusion-sm</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>About <em>fusion</em></li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/fusion.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <span class="target" id="module-fusion"></span><div class="section" id="about-fusion">
+<h1>About <em>fusion</em><a class="headerlink" href="#about-fusion" title="Permalink to this headline">¶</a></h1>
+<p>The <cite>fusion</cite> package provides common methods to perform data integration
+commonly referred to as <cite>data fusion</cite>.  Enriching a data set with external
+information can often lead to improvements in modeling accuracy as well as
+more insightful analyses.  Having these tools readily available will streamline
+this processes and allow data fusion to become a more common task within
+data science.</p>
+<div class="section" id="what-is-data-fusion">
+<h2>What is Data Fusion<a class="headerlink" href="#what-is-data-fusion" title="Permalink to this headline">¶</a></h2>
+<p>Data Fusion is the process of integrating multiple sources of information
+about a population collected through some measurement process.  In a marketing
+setting, this typically involves combining panels or other population samples
+with the goal of enriching the overall behavioral knowledge.  Usually a new,
+more robust data source is then created that can be used for more granular
+targeting or more accurate predictive modeling.</p>
+<p>In general, given data sources A with variables <cite>X, Y</cite> and B with variables <cite>X, Z</cite>
+the goal of data fusion is to make inferences on the joint but unobserved data
+<cite>X, Y, Z</cite>. The joint density <cite>Y, Z</cite> is inestimable from the observed data and
+must be modeled via parameter estimation (maximum likelihood or bayesian
+parametric approaches; non-parametric methods) or full synthetic data creation.</p>
+<p>To make this estimation feasible, an assumption (often implicit) is undertaken -
+the specific variables in either data source, Y and Z, are independent given
+the common variables X.  That is, <span class="math notranslate nohighlight">\(P(X,Y,Z) = P(Y|X)*P(Z|X)*P(X)\)</span></p>
+<p>This assumption is usually not testible and is a source of much research and
+debate amongst practitioners.  An oft suggested workaround to loosen this assumption
+is the incorporation of auxilary information to inform model priors or uncertainty
+of fusion results.  Auxilary information can be difficult to obtain and it is
+common practice to assume the condition holds.</p>
+<div class="section" id="macro-vs-micro">
+<h3>Macro vs. Micro<a class="headerlink" href="#macro-vs-micro" title="Permalink to this headline">¶</a></h3>
+<p>Data Fusion has often been divided into two main approaches: <em>macro</em> and <em>micro</em>.</p>
+<p><em>Macro</em> fusion is concerned with estimating the probabilistic structure of the
+data generating process.  This involves estimating key population parameters
+that can be used for inferential statistics; i.e. joint distributions, marginal
+distributions, correlations, etc.</p>
+<p><em>Micro</em> fusion is aimed at creating a complete synthetic dataset with all of the
+desired variables present.  This approach involves imputing values for the
+specific variables and the completed dataset used for further modeling and
+analysis. The <em>micro</em> data fusion approach is the focus of <cite>data-fusion-sm</cite>.</p>
+</div>
+<div class="section" id="practical-examples">
+<h3>Practical Examples<a class="headerlink" href="#practical-examples" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p><a class="reference external" href="https://www.ssa.gov/policy/docs/workingpapers/wp18.pdf">US Income analysis</a></p></li>
+<li><p><a class="reference external" href="http://www.zonalatina.com/Zldata166.htm">Data Fusion in Latin America</a></p></li>
+<li><p><a class="reference external" href="https://www.rsmb.co.uk/services/data-integration/">RSMB Data Integration</a></p></li>
+</ul>
+</div>
+<div class="section" id="resources">
+<h3>Resources<a class="headerlink" href="#resources" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p><a class="reference external" href="https://ec.europa.eu/eurostat/documents/3888793/5855821/KS-RA-13-020-EN.PDF">Statistical matching: a model based approach for data integration</a></p></li>
+<li><p><a class="reference external" href="http://ebusiness.mit.edu/research/papers/185_Gupta_Data_Fusion.pdf">Data Fusion Through Statistical Matching</a></p></li>
+<li><p><a class="reference external" href="https://cran.r-project.org/web/packages/StatMatch/">StatMatch - R package</a></p></li>
+<li><p><a class="reference external" href="https://www.amazon.com/Statistical-Matching-Practice-Marcello-DOrazio/dp/0470023538/ref=sr_1_1?keywords=statistical+matching+theory+and+practice&amp;qid=1577824496&amp;sr=8-1">Statistical Matching: Theory and Practice by Marcello D’Orazio, Marco Di Zio, Mauro Scanu</a></p></li>
+<li><p><a class="reference external" href="https://www.nielsen.com/wp-content/uploads/sites/3/2019/04/Nielsen-Introduction-to-Data-Fusion-1.pdf">Data Fusion at Nielsen</a></p></li>
+<li><p><a class="reference external" href="https://www.ipsos.com/sites/default/files/publication/1970-01/IpsosMediaCT_WhitePaper_DataFusion_Jun2011.pdf">Data Fusion at Ipsos</a></p></li>
+<li><p><a class="reference external" href="https://www.researchgate.net/publication/287596724_The_design_and_precision_of_data-fusion_studies">The design and precision of data-fusion studies</a></p></li>
+</ul>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, Daniel Cooper
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
