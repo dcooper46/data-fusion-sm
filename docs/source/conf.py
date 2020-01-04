@@ -16,11 +16,12 @@ sys.path.insert(0, os.path.abspath('../..'))
 
 # -- Project information -----------------------------------------------------
 
-project = 'fusion'
+project = 'data-fusion-sm'
 copyright = '2019, Daniel Cooper'
 author = 'Daniel Cooper'
 
 # The full version, including alpha/beta/rc tags
+verson = '0.4.0'
 release = '0.4.0'
 
 

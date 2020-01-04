@@ -1,6 +1,6 @@
 
-Welcome to fusion's documentation!
-==================================
+Welcome to data-fusion-sm!
+==========================
 
 :doc:`data-fusion-sm <fusion>` is a Python package that provides classes and
 methods to join two data sources that contain disparate information; the goal
