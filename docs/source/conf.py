@@ -35,8 +35,6 @@ extensions = [
     'sphinx.ext.mathjax',
     'sphinx.ext.todo',
     'sphinx.ext.napoleon',
-    'IPython.sphinxext.ipython_console_highlighting',
-    'IPython.sphinxext.ipython_directive',
     'sphinx.ext.autosectionlabel',
     'sphinx_autodoc_typehints'
 ]
