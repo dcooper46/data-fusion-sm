@@ -44,8 +44,6 @@ Fusion of two surveys via Predictive Mean Matching::
     impF = PMM("forest")
     fused_survey = impF.fit_transform(survey1, survey2)
 
-
-
 Contents
 --------
 .. toctree::
@@ -53,8 +51,6 @@ Contents
 
    implicit
    evaluation
-
-
 
 Indices and tables
 ==================

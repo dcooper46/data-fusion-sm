@@ -60,8 +60,8 @@ class PMM(ImplicitModelMixin, BaseImplicitModel):
     --------
     >>> from datafusionsm.datasets import load_tv_panel, load_online_survey
     >>> from datafusionsm.implicit_model import PMM
-    >>> panel = load_tv_panel
-    >>> survey = load_online_survey
+    >>> panel = load_tv_panel()
+    >>> survey = load_online_survey()
     >>> pmm = PMM(match_method="jonker_volgenant",
     ...           model_method="forest").fit(panel, survey, critical="age,gender")
     >>> fused = pmm.transform(panel, survey, target="income")

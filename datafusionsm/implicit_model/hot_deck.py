@@ -63,8 +63,8 @@ class HotDeck(ImplicitModelMixin, BaseImplicitModel):
     --------
     >>> from datafusionsm.datasets import load_tv_panel, load_online_survey
     >>> from datafusionsm.implicit_model import HotDeck
-    >>> panel = load_tv_panel
-    >>> survey = load_online_survey
+    >>> panel = load_tv_panel()
+    >>> survey = load_online_survey()
     >>> hd = HotDeck(
     ...     match_method="neighbors", score_method="manhattan"
     ... ).fit(panel, survey, critical="age,gender")
