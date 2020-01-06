@@ -21,8 +21,8 @@ copyright = '2019, Daniel Cooper'
 author = 'Daniel Cooper'
 
 # The full version, including alpha/beta/rc tags
-verson = '0.4.0'
-release = '0.4.0'
+verson = '0.5.0'
+release = '0.5.0'
 
 
 # -- General configuration ---------------------------------------------------
