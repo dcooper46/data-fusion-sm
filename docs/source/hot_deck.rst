@@ -3,8 +3,5 @@
 Hot Deck Imputation
 -------------------
 
-.. automodule:: datafusionsm.implicit_model.hot_deck
+.. autoclass:: datafusionsm.implicit_model.HotDeck
     :members:
-
-.. toctree::
-   :maxdepth: 1

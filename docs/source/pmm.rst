@@ -3,8 +3,5 @@
 Predictive Mean Matching
 ------------------------
 
-.. automodule:: datafusionsm.implicit_model.pmm
+.. autoclass:: datafusionsm.implicit_model.PMM
     :members:
-
-.. toctree::
-   :maxdepth: 1

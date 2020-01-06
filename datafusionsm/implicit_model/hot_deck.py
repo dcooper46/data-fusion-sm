@@ -48,12 +48,27 @@ class HotDeck(ImplicitModelMixin, BaseImplicitModel):
     Attributes
     ----------
     critical: array-like[str]
+        Critical cells to match within where records must match perfectly
 
     matches: array-like[tuple[str, str]]
+        Matched record pairs - record indices or id column values
 
     usage: Counter
+        How often a donor was used as a matching donor
 
     imp_wgts: array-like[float]
+        Weights defining the impact of each feature when comparing records.
+
+    Examples
+    --------
+    >>> from datafusionsm.datasets import load_tv_panel, load_online_survey
+    >>> from datafusionsm.implicit_model import HotDeck
+    >>> panel = load_tv_panel
+    >>> survey = load_online_survey
+    >>> hd = HotDeck(
+    ...     match_method="neighbors", score_method="manhattan"
+    ... ).fit(panel, survey, critical="age,gender")
+    >>> fused = hd.transform(panel, survey, target="income")
     """
     def __init__(
             self, match_method="nearest", score_method="cosine",

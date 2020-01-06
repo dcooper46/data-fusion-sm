@@ -21,12 +21,12 @@ def _build_model(X, y, method, **kwargs):
 
 class PMM(ImplicitModelMixin, BaseImplicitModel):
     """
-    fuse two data sources together using Predictive Mean Matching.
-    First, a model for the target is trained on the donor data.  Then
+    Fuse two data sources together using Predictive Mean Matching.
+    A model for the target is trained on the donor data and then
     applied to both the donor and recipient data sets.  Statistical Matching
     (hot-deck imputation) is then performed, based on record
-    similarity/distances on the predicted target values.  Live values from the
-    donor data is then imputed for the recipient.
+    similarity/distances on the predicted target values.  Live values
+    (actually observed) from the donor data is then imputed for the recipient.
 
     Parameters
     ----------
@@ -48,12 +48,23 @@ class PMM(ImplicitModelMixin, BaseImplicitModel):
     Attributes
     ----------
     critical: array-like[str]
+        Critical cells to match within where records must match perfectly
 
-    matches: array-like[tuple[str, str]]
+    results: dict[string, array-like[tuple[str, str]]]
+        For each target:
+            matched id pairs - record indices or id column values
+            usage - count of donor usage
+            scores - distances for matched records
 
-    usage: Counter
-
-    imp_wgts: array-like[float]
+    Examples
+    --------
+    >>> from datafusionsm.datasets import load_tv_panel, load_online_survey
+    >>> from datafusionsm.implicit_model import PMM
+    >>> panel = load_tv_panel
+    >>> survey = load_online_survey
+    >>> pmm = PMM(match_method="jonker_volgenant",
+    ...           model_method="forest").fit(panel, survey, critical="age,gender")
+    >>> fused = pmm.transform(panel, survey, target="income")
     """
     def __init__(
         self, targets, match_method="nearest", score_method="euclidean",

@@ -18,19 +18,11 @@ most often used in the data fusion literature and applications, and are the
 only ones currently offered.
 
 
-Hot Deck Imputation
-^^^^^^^^^^^^^^^^^^^
+Implicit Models
+^^^^^^^^^^^^^^^
 
 .. toctree::
     :maxdepth: 1
 
     hot_deck
-
-
-Predictive Mean Matching
-^^^^^^^^^^^^^^^^^^^^^^^^
-
-.. toctree::
-   :maxdepth: 1
-
-   pmm
+    pmm

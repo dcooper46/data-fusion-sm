@@ -1,6 +1,7 @@
 
-Welcome to data-fusion-sm!
-==========================
+****************************************************
+data-fusion-sm: data fusion via statistical matching
+****************************************************
 
 :doc:`data-fusion-sm <fusion>` is a Python package that provides classes and
 methods to join two data sources that contain disparate information; the goal
@@ -51,6 +52,7 @@ Contents
    :maxdepth: 1
 
    implicit
+   evaluation
 
 
 
