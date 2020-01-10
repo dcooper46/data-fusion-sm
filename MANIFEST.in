@@ -1,0 +1,1 @@
+recursive-include datafusionsm/datasets/data *.csv *.csv.gz *.txt

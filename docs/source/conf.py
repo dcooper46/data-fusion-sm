@@ -21,8 +21,10 @@ copyright = '2019, Daniel Cooper'
 author = 'Daniel Cooper'
 
 # The full version, including alpha/beta/rc tags
-verson = '0.5.0'
-release = '0.5.0'
+import datafusionsm
+
+version = datafusionsm.__version__
+release = datafusionsm.__version__
 
 
 # -- General configuration ---------------------------------------------------
