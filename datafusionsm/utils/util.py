@@ -105,12 +105,3 @@ def ensure_percentage(p):
         return float(p) / 100.0
     else:
         raise ValueError("{} is not a valid percentage".format(p))
-
-
-def random_pairing(x, y):
-    """
-    pair x values with random values from y
-    """
-    nx = len(x)
-    ny = len(y)
-    return list(zip(range(nx), np.random.choice(range(ny), nx, True)))
