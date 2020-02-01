@@ -18,7 +18,6 @@ from datafusionsm.importance_weights import (
     supervised_imp_wgts as s_iw, unsupervised_imp_wgts as u_iw
 )
 from datafusionsm.utils.exceptions import NotFittedError, DataFormError
-from datafusionsm.utils import random_pairing
 
 
 class HotDeck(ImplicitModelMixin, BaseImplicitModel):
@@ -255,49 +254,44 @@ class HotDeck(ImplicitModelMixin, BaseImplicitModel):
         score_method = score_args["method"]
         _score_args = {k: v for k, v in score_args.items()
                        if k != "method"}
+        scores_mat = self._score_records(
+            recipients, donors, score_method, **_score_args
+        )
 
         match_args = kwargs["match_args"]
         match_method = match_args["method"]
         minimize = match_args["minimize"]
         _match_args = {k: v for k, v in match_args.items()
                        if k not in ("method", "minimize")}
-
         if match_method not in self.match_methods:
             raise ValueError(
                 "invalid matching method."
                 "Possible values are {}".format(",".join(self.match_methods))
             )
-        if match_method == 'random':
-            matches = random_pairing(recipients, donors)
-            scores = []
-        else:
-            scores_mat = self._score_records(
-                recipients, donors, score_method, **_score_args
-            )
-            if match_method == 'nearest':
-                matches, scores = nb.nearest(scores_mat, minimize, **_match_args)
-            elif match_method == 'neighbors':
-                try:
-                    k = _match_args.pop('k')
-                    matches, scores = nb.neighbors(
-                        scores_mat, k, minimize, **_match_args
-                    )
-                except KeyError as e:
-                    warnings.warn(
-                        "neighborhood matching selected but"
-                        "missing value for the number of neighbors: " + str(e) +
-                        "  Using default value of 5"
-                    )
-                    matches, scores = nb.neighbors(
-                        scores_mat, minimize=minimize, **_match_args
-                    )
-            elif match_method in la.methods:
-                matches, scores = la.lap(match_method, scores_mat, minimize)
-            else:
-                raise NotImplementedError(
-                    "the chosen method is not currently"
-                    "available: {}".format(match_method)
+        if match_method == 'nearest':
+            matches, scores = nb.nearest(scores_mat, minimize, **_match_args)
+        elif match_method == 'neighbors':
+            try:
+                k = _match_args.pop('k')
+                matches, scores = nb.neighbors(
+                    scores_mat, k, minimize, **_match_args
                 )
+            except KeyError as e:
+                warnings.warn(
+                    "neighborhood matching selected but"
+                    "missing value for the number of neighbors: " + str(e) +
+                    "  Using default value of 5"
+                )
+                matches, scores = nb.neighbors(
+                    scores_mat, minimize=minimize, **_match_args
+                )
+        elif match_method in la.methods:
+            matches, scores = la.lap(match_method, scores_mat, minimize)
+        else:
+            raise NotImplementedError(
+                "the chosen method is not currently"
+                "available: {}".format(match_method)
+            )
         return matches, scores
 
     def _score_records(self, x, y, metric, **kwargs):
