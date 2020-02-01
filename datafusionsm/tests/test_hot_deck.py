@@ -64,7 +64,9 @@ def test_configurable_scoring_methods():
 
 
 def test_configurable_matching_methods():
-    for matcher in ["nearest", "neighbors", "hungarian", "jonker_volgenant"]:
+    for matcher in [
+        "nearest", "neighbors", "hungarian", "jonker_volgenant", "random"
+    ]:
         hd = HotDeck(match_method=matcher)
         hd.fit(donors, recipients)
         assert hd.matches is not None
