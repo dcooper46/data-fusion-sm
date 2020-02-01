@@ -6,7 +6,7 @@ from datafusionsm.utils.formatting import encode_columns
 
 class BaseImplicitModel:
     """ Base implicit_model """
-    match_methods = ["nearest", "neighbors", "hungarian", "jonker_volgenant"]
+    match_methods = ["nearest", "neighbors", "hungarian", "jonker_volgenant", "random"]
     local_score_methods = {"gower": None, "exact": None}
     sklearn_score_methods = {"cosine", "euclidean", "manhattan"}
     importance_methods = ["entropy", "gini", "info_gain", "linear", "tree"]
