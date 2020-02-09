@@ -4,7 +4,7 @@ helper methods for building model wrappers
 from numpy import argmax
 from pandas.api.types import is_numeric_dtype, is_string_dtype
 from sklearn.base import clone
-from sklearn.model_selection import KFold
+from sklearn.model_selection import KFold, train_test_split
 from sklearn.preprocessing import LabelEncoder
 from sklearn.linear_model import LinearRegression, LogisticRegression
 from sklearn.tree import DecisionTreeRegressor, DecisionTreeClassifier
@@ -52,7 +52,8 @@ def train_model(model, X, y, k):
             scores.append(mod.score(X_test, y_test))
         ret_model = models[argmax(scores)]
     else:
-        ret_model = model.fit(X, y)
+        X_train, X_test, y_train, y_test = train_test_split(X, y)
+        ret_model = clone(model).fit(X_train, y_train)
     return ret_model
 
 

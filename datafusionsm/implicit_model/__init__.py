@@ -8,6 +8,7 @@ probability distribution of all variables for inference, will be a
 future enhancement.
 """
 from datafusionsm.implicit_model.hot_deck import HotDeck
-from datafusionsm.implicit_model.pmm import PMM
+from datafusionsm.implicit_model.predictive_mean_matching import PMM
+from datafusionsm.implicit_model.predictive_isotonic_matching import PIM
 
-__all__ = ["HotDeck", "PMM"]
+__all__ = ["HotDeck", "PMM", "PIM"]
