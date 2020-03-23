@@ -19,5 +19,5 @@ def load_tv_panel():
 def load_online_survey():
     """ online survey description """
     cur_dir = dirname(__file__)
-    online_survey = _load_data(cur_dir, "online-panel.csv")
+    online_survey = _load_data(cur_dir, "online-survey.csv")
     return online_survey

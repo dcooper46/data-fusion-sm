@@ -203,10 +203,6 @@ class PIM(ImplicitModelMixin, BaseImplicitModel):
         donor_preds = predict(target_model, donors)
         recipient_preds = predict(target_model, recipients)
 
-        # print()
-        # print(f"donor-shape: {donor_preds.shape}")
-        # print(f"recip-shape: {recipient_preds.shape}")
-
         match_args = kwargs["match_args"]
         match_method = match_args["method"]
         _match_args = {k: v for k, v in match_args.items()
@@ -218,7 +214,7 @@ class PIM(ImplicitModelMixin, BaseImplicitModel):
             match_method,
             **_match_args
         )
-        # print(f"matches: {len(matches)}")
+
         return matches, scores
 
 
@@ -261,8 +257,7 @@ def unconstrained_iso(x_ids, y_ids, x_binned, y_binned, n_bins):
     for quantile in range(n_bins + 1):
         x_quants = np.where(x_binned == quantile)[0].astype(int)
         y_quants = np.where(y_binned == quantile)[0].astype(int)
-        # print(f"quantile: {quantile} => x: {x_quants}")
-        # print(f"quantile: {quantile} => y: {y_quants}")
+
         if x_quants.size == 0:
             if y_quants.size > 0:
                 underflow = y_quants
@@ -279,6 +274,7 @@ def unconstrained_iso(x_ids, y_ids, x_binned, y_binned, n_bins):
             matches.append((int(xid), int(yq_ids[i % len(yq_ids)])))
             scores.append(abs(xq[i] - yq[i % len(yq_ids)]))
         overflow = []
+
     if len(overflow) > 0:
         xq_ids, xq = zip(*x_ids[overflow])
         yq_ids, yq = zip(*y_ids[underflow])
@@ -287,6 +283,5 @@ def unconstrained_iso(x_ids, y_ids, x_binned, y_binned, n_bins):
         for i, xid in enumerate(xq_ids):
             matches.append((int(xid), int(yq_ids[i % len(yq_ids)])))
             scores.append(abs(xq[i] - yq[i % len(yq_ids)]))
-    # print(f"matched: {len(matches)}")
-    # print(f"unmatched: {len(overflow)}")
+
     return matches, scores

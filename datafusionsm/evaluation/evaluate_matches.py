@@ -15,17 +15,9 @@ def _safe_divide(n, d):
 
 
 def _join_panels(matches, donors, recipients):
-    matches_df = pd.DataFrame(matches, columns=["recipient_id", "donor_id"])
-    matched_recipients = (
-        recipients
-        .rename(columns={"panel_id": "recipient_id"})
-        .merge(matches_df, on="recipient_id")
-    )
-    return matched_recipients.merge(
-        donors.rename(columns={"panel_id": "donor_id"}),
-        on="donor_id",
-        suffixes=("_r", "_d")
-    )
+    recip_id, donor_id = matches.columns
+    matched_recipients = recipients.merge(matches, on=recip_id)
+    return matched_recipients.merge(donors, on=donor_id, suffixes=("_r", "_d"))
 
 
 def _permute_values(panel, feats):
